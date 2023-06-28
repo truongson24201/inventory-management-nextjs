@@ -1,27 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+ 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html {
+  color: #30343A;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-size: 14px;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+input {
+  outline: none;
+}
+
+.container {
+  max-width: 1200px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-primary {
+  color: #1abc9c;
+}
+
+.bg-primary {
+  background-color: #1abc9c;
+}
+
+.track {
+  border: dashed 2px #666;
+}
+
+.animation-bounce-in-right {
+  animation: bounce-in-out 3s forwards ease-in-out ;
+}
+
+@keyframes bounce-in-out {
+  0% {
+      transform: translateX(130%);
+  }
+  10% {
+      transform: translateX(0);
+  }
+  85% {
+      transform: translateX(0);
+  }
+  90% {
+    transform: translateX(0) scale(0.85);
+  }
+  100% {
+      transform: translateX(200%) scale(0.6);
+  }
 }

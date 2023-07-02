@@ -15,7 +15,7 @@ export default function Form({
 }) {
     return (
         <section 
-            className="w-full max-w-xs mx-auto md:w-1/2 lg:w-1/3 pt-10 flex flex-col "
+            className=" w-full max-w-xs mx-auto md:w-1/2 lg:w-1/3 pt-10 flex flex-col "
             onSubmit={handleSubmitForm}
         >
             <section className="mb-4">
@@ -55,7 +55,7 @@ export function Input({
     handleChangeInput: (e: ChangeEvent<HTMLInputElement>) => void, 
 }) {
     return (
-        <label className="flex flex-col">
+        <label className=" flex flex-col">
             {label}
             <div className="relative">
                 <input 
@@ -80,7 +80,7 @@ export function Button({
     text: string,
 }) {
     return (
-        <button className="absolute left-0 right-0 bottom-0 h-10 rounded-md bg-gray-700 text-white font-bold">
+        <button className="absolute left-0 right-0 bottom-0 h-10 rounded-md bg-blue-400 text-white font-bold">
             {text}
         </button>
     )

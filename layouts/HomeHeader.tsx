@@ -10,7 +10,7 @@ export default function Header() {
                     <Logo />
                 </Link>
                 <nav className="flex gap-6 items-center">
-                    <Link href={HomeUrls.StaffLogin}>Staff log in</Link>
+                    <Link href={HomeUrls.AdminLogin}>Admin Log-in</Link>
                 </nav>
             </section>
         </header>

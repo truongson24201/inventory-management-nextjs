@@ -1,5 +1,6 @@
 'use client';
-import Header from "@/layouts/Header"; 
+import Header from "@/layouts/DashboardHeader";
+import Main from "@/layouts/DashboardMain";
 import useActiveNav from "@/utils/hooks/useActiveNav";
 import { useEffect } from "react";
 
@@ -10,15 +11,12 @@ export default function Page() {
     }, []);
     return (
         <section className="w-full flex flex-col">
-            <Header> 
+            <Header>
+                
             </Header>
-            <main className="h-full border-t-2 bg-gray-100">
-                <main className="w-full h-full p-4">
-                    <div className="w-full h-full bg-white border-2 rounded-md">
-
-                    </div>
-                </main>
-            </main>
+            <Main>
+                
+            </Main>
         </section>  
     )
 }

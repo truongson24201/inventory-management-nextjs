@@ -6,6 +6,7 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './utils/hooks/**/*.{js,ts,jsx,tsx,mdx}',
+    './services/**/*.{js,ts,jsx,tsx,mdx}',
   ], 
   plugins: [],
 }

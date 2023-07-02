@@ -1,5 +1,5 @@
 'use client'; 
-import Header from "@/layouts/Header"; 
+import Header from "@/layouts/DashboardHeader"; 
 
 export default function Layout({
     children

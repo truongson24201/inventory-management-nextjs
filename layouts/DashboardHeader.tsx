@@ -1,3 +1,4 @@
+import { Color } from "@/utils/constants/colors";
 import Icon from "../components/Icon";
 
 export default function Header({
@@ -28,5 +29,27 @@ function Action({
         <div className="w-11 grid place-items-center aspect-square hover:bg-gray-100 rounded-full cursor-pointer ">
             <Icon name={icon} size={size} />
         </div>
+    )
+}
+
+export function Button({
+    text,
+    color = Color.BLACK,
+    bgColor,
+    actionHandler
+}: {
+    text: string,
+    color?: Color,
+    bgColor: Color,
+    actionHandler: () => void,
+}) {
+
+    return (
+        <button
+            className={`px-3 py-2 bg-[${bgColor}] text-[${color}] font-bold rounded-md hover:bg-opacity-80 transition`}
+            onClick={actionHandler}
+        >
+            {text}
+        </button>
     )
 }

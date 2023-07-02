@@ -1,11 +1,10 @@
 'use client';
-
 import { useRouter } from "next/navigation";
 import NavGroup, { FuncNav } from "@/components/NavGroup"
 import Sidebar from "@/layouts/Sidebar"
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { HomeUrls } from "@/utils/constants/urls"; 
-import { adminNavs, staffNavs } from "@/utils/constants/navs";
+import { adminNavs } from "@/utils/constants/navs";
 
 export default function Layout({
     children
@@ -17,7 +16,7 @@ export default function Layout({
 
     function logout() {
         showLoading();
-        router.push(HomeUrls.StaffLogin);
+        router.push(HomeUrls.AdminLogin);
         hideLoading();
     }
     return (

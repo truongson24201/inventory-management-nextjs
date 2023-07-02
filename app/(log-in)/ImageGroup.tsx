@@ -6,7 +6,7 @@ export default function ImageGroup({
     srcs: [string, string]
 }) {
     return (
-        <section className="hidden w-1/2 lg:w-2/3 md:flex">
+        <section className=" hidden w-1/2 lg:w-2/3 md:flex">
             {srcs.map(src => (
                 <div key={src} className="relative w-full first:hidden lg:first:block">
                     <Image

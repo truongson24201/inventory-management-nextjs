@@ -25,6 +25,13 @@ export const staffNavs = [
 export const adminNavs = [
     {icon: 'house', url: adminUrls.Home, text: "Home"}, 
     {icon: 'box-open', url: adminUrls.Products, text: "Products"}, 
+    {icon: 'boxes-stacked', url: adminUrls.ProductCategories, text: "Product Categories"}, 
+    {icon: 'handshake-angle', url: adminUrls.Customers, text: "Customers"}, 
+    {icon: 'truck-field', url: adminUrls.Suppliers, text: "Suppliers"}, 
+    {icon: 'warehouse', url: adminUrls.Warehouses, text: "Warehouses"}, 
+    {icon: 'building', url: adminUrls.Branches, text: "Branches"}, 
+    {icon: 'users', url: adminUrls.Users, text: "Users"}, 
+    {icon: 'chart-simple', url: adminUrls.Users, text: "Reports"}, 
 
 ]
 

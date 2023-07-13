@@ -8,6 +8,7 @@ import Table from "@/layouts/Table";
 import { Color } from "@/utils/constants/colors";
 import useActiveNav from "@/utils/hooks/useActiveNav"
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface WarehouseData {
@@ -21,6 +22,7 @@ export default function Page() {
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [_, setActiveNav] = useActiveNav();
     const [warehouses, setWarehouses] = useState<WarehouseData[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         setActiveNav("Warehouses");
@@ -66,7 +68,7 @@ export default function Page() {
                     text="Add Warehouse"
                     color={Color.WHITE}
                     bgColor={Color.GREEN} 
-                    actionHandler={() => {}}
+                    actionHandler={() => {router.push("warehouses/add")}}
                 />
             </Header>
             <Main>

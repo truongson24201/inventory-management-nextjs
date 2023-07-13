@@ -1,6 +1,6 @@
 'use client';
 import { getBranchById } from "@/api/branch";
-import { getWarehouseById } from "@/api/warehouse";
+import { deleteWarehouse, getWarehouseById } from "@/api/warehouse";
 import BackwardButton from "@/components/BackwardButton";
 import Title from "@/components/DashboardTitle";
 import Header, { Button } from "@/layouts/DashboardHeader";
@@ -15,6 +15,9 @@ import InfoBar from "@/components/InfoBar";
 import Table from "@/layouts/Table";
 import { getWhsProductsByWarehouse, warehouseProductResponse } from "@/api/warehouseProduct";
 import { ProductResponse, getAllProducts } from "@/api/product";
+import usePopup from "@/utils/hooks/usePopup";
+import Popup from "@/components/Popup";
+import useNotification from "@/utils/hooks/useNotification";
 
 interface Warehouse {
     id: number,
@@ -45,6 +48,8 @@ export default function Page({
         address: "",
         branchName: ""
     });
+    const popup = usePopup();
+    const notify = useNotification();
 
     useEffect(() => {
         setActiveNav("Warehouses");
@@ -100,6 +105,41 @@ export default function Page({
         }
     }
 
+    async function deleteThisWarehouse() {
+        try {
+            showLoading();
+            await deleteWarehouse(warehouseId);
+            router.push("./")
+            notify("Delete warehouse successfully!", "success");
+        }
+        catch (error) {
+            console.log(error);
+            notify("Delete warehouse failed!", "error");
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+    const deleteWarehousePopup = 
+        <Popup text="This warehouse will be deleted, you're sure?">
+            <Button
+                text="Delete"
+                color={Color.WHITE}
+                bgColor={Color.RED} 
+                actionHandler={() => {
+                    popup.hide();
+                    deleteThisWarehouse();
+                }}
+            />
+            <Button
+                text="Cancel"
+                color={Color.BLACK}
+                bgColor={Color.WHITE} 
+                actionHandler={() => {popup.hide()}}
+            />
+        </Popup>
+
     return (
         <section className="w-full flex flex-col">
             <Header>
@@ -111,14 +151,14 @@ export default function Page({
                         bgColor={Color.ORANGE} 
                         actionHandler={() => router.push(`${warehouseId}/edit`)}
                     />
-                    {/* <Button
+                    <Button
                         text="Delete"
                         color={Color.WHITE}
                         bgColor={Color.RED} 
                         actionHandler={() => {
-                            popup.show(deleteBranchPopup);
+                            popup.show(deleteWarehousePopup);
                         }}
-                    /> */}
+                    />
                 </div>
             </Header>
             <Main>

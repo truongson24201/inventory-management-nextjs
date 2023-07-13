@@ -125,6 +125,11 @@ input {
 }
 
 
+/* ======= ANIMATIONS ======= */
+.zoom-in {
+  animation: zoom-in 0.2s forwards ease-out;
+}
+
 @keyframes bounce-in-out {
   0% {
       transform: translateX(130%);
@@ -140,5 +145,16 @@ input {
   }
   100% {
       transform: translateX(200%) scale(0.6);
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    transform: scale(0.1) translateY(-40px);
+    opacity: 0.1;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
   }
 }

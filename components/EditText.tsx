@@ -1,15 +1,17 @@
 import { ChangeEvent, useRef, useState } from "react";
 import Icon from "./Icon";
 
-export default function EditInput({
+export default function EditText({
     label,
     icon,
     handleChange,
     value,
+    type = "text",
     errorText = "",
 }: {
     label: string,
     icon: string,
+    type?: string,
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void,
     value: string,
     errorText: string,
@@ -26,6 +28,7 @@ export default function EditInput({
                 <input
                     className="w-full pl-2 bg-transparent border-l-2"
                     name={label}
+                    type={type}
                     onChange={(e) => {
                         handleChange(e);
                         setIsError(false);

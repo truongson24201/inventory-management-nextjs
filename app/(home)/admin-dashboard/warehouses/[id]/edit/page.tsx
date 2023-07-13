@@ -1,18 +1,20 @@
 'use client';
-import { getBranchById, updateBranch } from "@/api/branch";
 import BackwardButton from "@/components/BackwardButton";
-import Title from "@/components/DashboardTitle";
-import EditText from "@/components/EditText";
-import InfoBar from "@/components/InfoBar";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import { Color } from "@/utils/constants/colors";
 import useActiveNav from "@/utils/hooks/useActiveNav";
-import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import Title from "@/components/DashboardTitle";
+import InfoBar from "@/components/InfoBar";
+import EditText from "@/components/EditText";
+import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
+import { getWarehouseById, updateWarehouse } from "@/api/warehouse";
+import { BranchResponse, getAllBranches } from "@/api/branch";
+import DropDown, { DropdownData } from "@/components/DropDown";
 
 export default function Page({
     params
@@ -20,28 +22,32 @@ export default function Page({
     params: {id: string}
 }) {
     const [_, setActiveNav] = useActiveNav();
-    const [showLoading, hideLoading] = useLoadingAnimation();
-    const branchId = Number.parseInt(params.id);
     const router = useRouter();
-    const notifyPopup = useNotification();
+    const notify = useNotification();
+    const warehouseId = Number.parseInt(params.id);
+    const [branchDataset, setBranchDataset] = useState<DropdownData[]>([]);
+    const [branchId, setBranchId] = useState(-1);
+    const [showLoading, hideLoading] = useLoadingAnimation();
     const [fields, setFields] = useState([
         {label: "Name", value: "", icon: "signature", isRequired: true, errorText: ""},
         {label: "Address", value: "", icon: "map-location-dot", isRequired: true, errorText: ""},
     ]);
 
     useEffect(() => {
-        setActiveNav("Branches");
-        fetchBranch();
+        setActiveNav("Warehouses");
+        fetchWarehouse();
+        fetchBranches();
     }, []);
 
-    async function fetchBranch() {
+    async function fetchWarehouse () {
         try {
             showLoading();
-            const {data} = await getBranchById(branchId);
+            const {data} = await getWarehouseById(warehouseId);
             setFields([
                 {...fields[0], value: data.name},
                 {...fields[1], value: data.address},
-            ])
+            ]);
+            setBranchId(data.branchId);
         }
         catch (error) {
             console.log(error);
@@ -49,6 +55,67 @@ export default function Page({
         finally {
             hideLoading();
         }
+    }
+
+    async function fetchBranches() {
+        try {
+            showLoading();
+            const {data: branches} = await getAllBranches();
+            const branchDS = branches.map((branch: BranchResponse) => ({
+                text: branch.name,
+                value: branch.id,
+            }));
+            setBranchDataset(branchDS);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+    async function requestUpdate() {
+        const checked = checkConstraint();
+        if (!checked) {
+            notify("Edit failed!", "error");
+            return;
+        }
+
+        try {
+            showLoading();
+            await updateWarehouse(warehouseId, fields[0].value, fields[1].value, branchId);
+            router.push("./");
+            notify("Edit successfully!", "success");
+        }
+        catch (error) {
+            notify("Edit failed!", "error");
+            console.log(error);
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+    function checkConstraint() {
+        let isError = false;
+        let errors: string[] = [];
+
+        fields.forEach(field => {
+            const checkErrorValue = field.isRequired && !field.value;
+
+            if (checkErrorValue) {
+                errors.push("Cannot blank this field");
+                isError = true;
+            }
+            else errors.push("");
+        })
+
+        setFields(fields.map((field, idx) => ({
+            ...field,
+            errorText: errors[idx],
+        })));
+        return !isError;
     }
 
     return (
@@ -60,11 +127,7 @@ export default function Page({
                         text="Save changes"
                         color={Color.WHITE}
                         bgColor={Color.BLUE} 
-                        actionHandler={() => {
-                            updateBranch(branchId, fields[0].value, fields[1].value);
-                            router.push("./");
-                            notifyPopup("Edit successfully!", "success");
-                        }}
+                        actionHandler={requestUpdate}
                     /> 
                 </div>
             </Header>
@@ -73,18 +136,25 @@ export default function Page({
                     <section className="relative w-1/2 flex place-content-center">
                         <Image 
                             className="object-fill"
-                            src="/images/branch-edit.jpg"
+                            src="/images/warehouse-edit.jpg"
                             alt="Branch images"
                             fill
                         />
                     </section>
                     <section className="w-1/2 border-2 flex flex-col p-5 rounded-md">
                         <Title
-                            text="Edit branch information"
+                            text="Edit warehouse information"
                             icon="pencil"
                         />
                         <form className="mt-10 mx-auto w-[480px] flex flex-col gap-4">
-                            <InfoBar label="Id" icon="hashtag" value={branchId} />
+                            <InfoBar label="Id" icon="hashtag" value={warehouseId} />
+                            <DropDown
+                                label="Branch"
+                                dataset={branchDataset}
+                                icon="building"
+                                value={branchId}
+                                handleChange={(e) => setBranchId(Number.parseInt(e.target.value))}
+                            />
                             {fields.map((field, idx) => 
                             <EditText
                                 icon={field.icon}

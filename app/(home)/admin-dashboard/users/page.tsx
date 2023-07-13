@@ -1,5 +1,4 @@
 'use client';
-import Icon from "@/components/Icon";
 import SearchInput from "@/components/SearchInput";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
@@ -13,6 +12,7 @@ export default function Page() {
     useEffect(() => {
         setActiveNav("Users");
     }, []);
+    
     return (
         <section className="w-full flex flex-col">
             <Header>

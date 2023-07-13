@@ -1,7 +1,7 @@
 export const enum HomeUrls {
     Home = "/",
-    StaffLogin = "/staff-log-in/",
-    AdminLogin = "/admin-log-in/",
+    StaffLogin = "/staff-login/",
+    AdminLogin = "/admin-login/",
 }
 
 const staffBasePath = "/staff-dashboard/";

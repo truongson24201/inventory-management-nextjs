@@ -66,24 +66,24 @@ function Notification({
     text,
     type = "danger",
 }: INotification) {
-    let className = "animation-bounce-in-right animation-bounce-out-up flex flex-col gap-1 w-80 px-2 py-2 border-2 text-gray-700 font-semibold rounded-md"
+    let className = "animation-bounce-in-right animation-bounce-out-up flex flex-col gap-1 w-80 px-2 py-2 border-2 text-gray-700 font-semibold rounded-md shadow-lg"
     let title;
     let icon = <Icon name="circle-info text-[#1abc9c]" />
 
     if (type == "info") {
-        className += " bg-blue-100";
+        className += " bg-blue-100 border-blue-200";
         icon = <Icon name="circle-info text-[#3498db]" size="lg" />;
         title = <span className="text-[#3498db]">Info</span>
     } else if (type == "danger") {
-        className += " bg-yellow-100";
+        className += " bg-yellow-100 border-yellow-200";
         icon = <Icon name="triangle-exclamation text-[#e67e22]" size="lg" />;
         title = <span className="text-[#e67e22]">Danger</span>
     } else if (type == "success") {
-        className += " bg-green-100"; 
+        className += " bg-green-100 border-green-200"; 
         icon = <Icon name="circle-check text-[#1abc9c]" size="lg" />;
         title = <span className="text-[#1abc9c]">Success</span>
     } else {
-        className += " bg-red-100"; 
+        className += " bg-red-100 border-red-200"; 
         icon = <Icon name="circle-xmark text-[#c0392b]" size="lg"  />;
         title = <span className="text-[#c0392b]">Error</span>
     }

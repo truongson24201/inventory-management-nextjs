@@ -45,6 +45,52 @@ input {
   background-color: #1abc9c;
 }
 
+.text-red {
+  color: #e74c3c;
+}
+.bg-red {
+  background-color: #e74c3c;
+}
+
+.text-red {
+  color: #e74c3c;
+}
+.bg-red {
+  background-color: #e74c3c;
+}
+
+.text-blue {
+  color: #3498db;
+}
+.bg-blue {
+  background-color: #3498db;
+}
+
+.text-green {
+  color: #1abc9c;
+}
+.bg-green {
+  background-color: #1abc9c;
+}
+
+.text-gray {
+  color: #bdc3c7;
+}
+.bg-gray {
+  background-color: #bdc3c7;
+}
+
+/* .bg-black {
+  background-color: #2c3e50;
+} */
+
+.bg-orange {
+  background-color: orange;
+}
+.text-orange {
+  color: orange;
+}
+
 .track {
   border: dashed 2px #666;
 }
@@ -52,6 +98,32 @@ input {
 .animation-bounce-in-right {
   animation: bounce-in-out 3s forwards ease-in-out ;
 }
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.grid-cols-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+.grid-cols-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+.grid-cols-7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+.grid-cols-8 {
+  grid-template-columns: repeat(8, 1fr);
+}
+.grid-cols-9 {
+  grid-template-columns: repeat(9, 1fr);
+}
+
 
 @keyframes bounce-in-out {
   0% {

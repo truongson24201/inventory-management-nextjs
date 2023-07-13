@@ -7,13 +7,14 @@ import ImageGroup from "../ImageGroup";
 
 import useLoadingAnimation, { Spinner } from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
+import { login } from "@/api/auth";
 
 export default function Page() { 
     const router = useRouter();
     const notify = useNotification();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [credentials, setCredentials] = useState({
-        username: 'eve.holt@reqres.in',
+        username: 'hoductrung',
         password: '123456',
     });
     const [errors, setErrors] = useState<{username: false | string, password: false | string}>({
@@ -23,8 +24,19 @@ export default function Page() {
 
     async function handleLogin(e: FormEvent) {
         e.preventDefault();
-        // Edit here
-        router.push(adminUrls.Home);
+
+        try {
+            showLoading();
+            const { data } = await login(credentials.username, credentials.password);
+            localStorage.setItem("token", data);
+            router.push(adminUrls.Home);
+        }
+        catch(error) {
+            console.log(error);
+        }
+        finally {
+            hideLoading();
+        }
     }
 
     return (
@@ -56,7 +68,6 @@ export default function Page() {
                 />
                 <Button text="Log in" />
             </Form> 
-
         </>
     )
 }

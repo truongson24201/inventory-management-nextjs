@@ -3,7 +3,6 @@ export default function Page({
 }: {
     params: {id: string}
 }) {
-    console.log(params);
     return (
         <h1>{params.id} Editing</h1>
     )

@@ -16,6 +16,7 @@ export default function Layout({
 
     function logout() {
         showLoading();
+        localStorage.removeItem('token');
         router.push(HomeUrls.AdminLogin);
         hideLoading();
     }

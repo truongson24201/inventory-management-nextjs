@@ -46,7 +46,7 @@ export function Button({
 
     return (
         <button
-            className={`px-3 py-2 bg-[${bgColor}] text-[${color}] font-bold rounded-md hover:bg-opacity-80 transition`}
+            className={`min-w-[80px] px-3 py-2 bg-${bgColor} text-${color} font-bold rounded-md hover:bg-opacity-80 transition`}
             onClick={actionHandler}
         >
             {text}

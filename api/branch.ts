@@ -2,7 +2,7 @@ import axios from "./axios.config";
 
 const apiPrefix = "/branches";
 
-export interface BranchResponse {
+export interface IBranchResponse {
     id?: number,
     name?: string,
     address?: string,

@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import Icon from "./Icon";
 
-export interface DropdownData {
+export interface IDropdownData {
     text: string,
     value: string | number,
 }
@@ -15,7 +15,7 @@ export default function DropDown({
 }: {
     label: string,
     icon: string,
-    dataset: DropdownData[],
+    dataset: IDropdownData[],
     handleChange: (e: ChangeEvent<HTMLSelectElement>) => void,
     value?: string | number,
 }) {

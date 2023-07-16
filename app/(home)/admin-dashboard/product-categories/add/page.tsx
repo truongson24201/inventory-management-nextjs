@@ -1,44 +1,48 @@
-'use client'
+'use client';
+import { createCategory } from "@/api/category";
 import BackwardButton from "@/components/BackwardButton";
 import Title from "@/components/DashboardTitle";
+import { IDropdownData } from "@/components/DropDown";
 import EditText from "@/components/EditText";
-import Header, { Button } from "@/layouts/DashboardHeader"
-import Main from "@/layouts/DashboardMain"
-import { Color } from "@/utils/constants/colors"
+import Header, { Button } from "@/layouts/DashboardHeader";
+import Main from "@/layouts/DashboardMain";
+import { Color } from "@/utils/constants/colors";
 import useActiveNav from "@/utils/hooks/useActiveNav";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { createBranch } from "@/api/branch";
-import { useRouter } from "next/navigation";
+import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
- 
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 export default function Page() {
     const [_, setActiveNav] = useActiveNav();
     const router = useRouter();
-    const notify = useNotification();  
+    const notify = useNotification();
     const [fields, setFields] = useState([
-        {label: "Name", value: "", icon: "signature", isRequired: true, errorText: ""},
-        {label: "Address", value: "", icon: "map-location-dot", isRequired: true, errorText: ""},
-    ])
+        {label: "Name", value: "", icon: "signature", isRequired: true, errorText: "", type: "text"},
+        {label: "Description", value: "", icon: "quote-left", isRequired: false, errorText: "", type: "text"},
+        {label: "Image URL", value: "", icon: "image", isRequired: false, errorText: "", type: "text"},
+    ]);
+    const [showLoading, hideLoading] = useLoadingAnimation();
 
     useEffect(() => {
-        setActiveNav("Branches");
+        setActiveNav("Product Categories");
     }, []);
-    
-    const requestCreateBranch = async () => {
+
+    const requestCreateCategory = async () => {
         const checked = checkConstraint();
         if (!checked) {
-            notify("Create a branch failed", "error");
+            notify("Create a category failed", "error");
             return;
         }
         try {
-            await createBranch(fields[0].value, fields[1].value);
+            await createCategory(fields[0].value, fields[1].value, fields[2].value);
             router.push("./");
-            notify("Create a branch successfully", "success");
+            notify("Create a category successfully", "success");
         }
         catch (error) {
             console.log(error);
-            notify("Create a branch failed", "error");
+            notify("Create a category failed", "error");
         } 
     }
 
@@ -71,21 +75,21 @@ export default function Page() {
                         text="Save"
                         color={Color.WHITE}
                         bgColor={Color.GREEN} 
-                        actionHandler={requestCreateBranch}
+                        actionHandler={requestCreateCategory}
                     />
                 </div>
             </Header>
             <Main>
                 <div className="w-[480px] h-full flex flex-col gap-8 p-5 mx-auto border-2 rounded-md shadow-md">
                     <Title
-                        text="Create a branch"
+                        text="Create a warehouse"
                         icon="plus"
                         color={Color.GREEN}
                     />
                     <div className="relative h-60">
                         <Image
-                            className="object-cover"
-                            src="/images/branch-create2.jpg"
+                            className="object-contain"
+                            src="/images/warehouse2.webp"
                             alt="Building image"
                             fill
                         />
@@ -95,7 +99,8 @@ export default function Page() {
                             <EditText
                                 icon={field.icon}
                                 label={field.label}
-                                value={field.value}
+                                value={field.value.toString()}
+                                type={field.type}
                                 handleChange={(e) => {
                                     setFields([
                                         ...fields.slice(0, idx),
@@ -104,7 +109,7 @@ export default function Page() {
                                             value: e.target.value,
                                         },
                                         ...fields.slice(idx + 1)
-                                    ]);
+                                    ]); 
                                 }}
                                 errorText={field.errorText}
                                 key={field.label + field.errorText}

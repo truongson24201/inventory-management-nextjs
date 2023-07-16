@@ -1,6 +1,6 @@
 'use client';
-import { BranchResponse, deleteBranch, getBranchById } from "@/api/branch";
-import { WarehouseResponse, getAllWarehouses, getWarehouseById } from "@/api/warehouse";
+import { IBranchResponse, deleteBranch, getBranchById } from "@/api/branch";
+import { IWarehouseResponse, getAllWarehouses, getWarehouseById } from "@/api/warehouse";
 import BackwardButton from "@/components/BackwardButton";
 import Title from "@/components/DashboardTitle";
 import InfoBar from "@/components/InfoBar";
@@ -24,12 +24,12 @@ export default function Page({
 }) {
     const [_, setActiveNav] = useActiveNav();
     const [showLoading, hideLoading] = useLoadingAnimation();
-    const [branch, setBranch] = useState<BranchResponse>({
+    const [branch, setBranch] = useState<IBranchResponse>({
         id: 1,
         name: "",
         address: ""
     });
-    const [warehouses, setWarehouses] = useState<WarehouseResponse[]>([]);
+    const [warehouses, setWarehouses] = useState<IWarehouseResponse[]>([]);
     const branchId = Number.parseInt(params.id);
     const router = useRouter();
     const popup = usePopup();
@@ -125,7 +125,7 @@ export default function Page({
 function InfoSection({
     branch
 }: {
-    branch: BranchResponse
+    branch: IBranchResponse
 }) {
     const inforBars: {label: string, key: "id" | "name" | "address", icon: string}[] = [
         {label: "Id", key: "id", icon: "hashtag"},
@@ -164,7 +164,7 @@ function InfoSection({
 function WarehousesSection({
     warehouses
 }: {
-    warehouses: WarehouseResponse[]
+    warehouses: IWarehouseResponse[]
 }) {
     return (
         <section className="w-3/5 p-3 pt-6 h-full flex flex-col border-2 rounded-r-sm gap-6">

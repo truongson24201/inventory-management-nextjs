@@ -1,9 +1,9 @@
 'use client';
-import { BranchResponse, getAllBranches } from "@/api/branch";
+import { IBranchResponse, getAllBranches } from "@/api/branch";
 import { createWarehouse } from "@/api/warehouse";
 import BackwardButton from "@/components/BackwardButton";
 import Title from "@/components/DashboardTitle";
-import DropDown, { DropdownData } from "@/components/DropDown";
+import DropDown, { IDropdownData } from "@/components/DropDown";
 import EditText from "@/components/EditText";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
@@ -24,7 +24,7 @@ export default function Page() {
         {label: "Address", value: "", icon: "map-location-dot", isRequired: true, errorText: "", type: "text"},
     ]);
     const [branchId, setBranchId] = useState(-1);
-    const [branchDataset, setBranchDataset] = useState<DropdownData[]>([]);
+    const [branchDataset, setBranchDataset] = useState<IDropdownData[]>([]);
     const [showLoading, hideLoading] = useLoadingAnimation();
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function Page() {
         try {
             showLoading();
             const {data: branches} = await getAllBranches();
-            const newBranchDataset = branches.map((branch: BranchResponse) => ({
+            const newBranchDataset = branches.map((branch: IBranchResponse) => ({
                 text: branch.name,
                 value: branch.id,
             }));

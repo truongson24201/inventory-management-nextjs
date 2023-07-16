@@ -17,10 +17,10 @@ export default function Table ({
             <main className="mt-1 flex flex-col max-h-[560px] overflow-auto">
             {dataSet.map(row => (
                 <div 
-                    key={count}
+                    key={row.id}
                     className={`grid grid-cols-${colsCount} min-h-[48px] shrink-0 odd:bg-gray-50 border-2 border-transparent hover:border-gray-300 hover:bg-[#ecf0f1]`}>
                     {columns.map(col => (
-                        <div key={count++} className="col-span-1 grid place-items-center text-center">
+                        <div key={col.key + col.text} className="col-span-1 grid place-items-center text-center">
                         {col.linkRoot
                             ? <Link className="w-full h-full grid place-items-center hover:bg-blue-100 text-blue-400 underline" href={col.linkRoot + row[col.key]}>{row[col.key]}</Link>
                             : row[col.key]

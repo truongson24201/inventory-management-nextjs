@@ -1,4 +1,4 @@
-import Header from "@/layouts/HomeHeader";
+import Header from "@/app/(log-in)/HomeHeader";
 
 export default function Layout({
     children

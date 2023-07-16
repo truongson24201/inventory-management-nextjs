@@ -2,7 +2,7 @@ import axios from "./axios.config";
 
 const apiPrefix = "/products";
 
-export interface ProductResponse {
+export interface IProductResponse {
     id: number,
     name: string,
     sku: string,

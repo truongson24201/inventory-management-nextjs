@@ -13,20 +13,20 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import InfoBar from "@/components/InfoBar";
 import Table from "@/layouts/Table";
-import { getWhsProductsByWarehouse, warehouseProductResponse } from "@/api/warehouseProduct";
-import { ProductResponse, getAllProducts } from "@/api/product";
+import { getWhsProductsByWarehouse, IWarehouseProductResponse } from "@/api/warehouseProduct";
+import { IProductResponse, getAllProducts } from "@/api/product";
 import usePopup from "@/utils/hooks/usePopup";
 import Popup from "@/components/Popup";
 import useNotification from "@/utils/hooks/useNotification";
 
-interface Warehouse {
+interface IWarehouse {
     id: number,
     name: string,
     address: string,
     branchName: string,
 }
 
-interface Product {
+interface IProduct {
     id: number,
     name: string,
     quantity: number,
@@ -41,8 +41,8 @@ export default function Page({
     const [showLoading, hideLoading] = useLoadingAnimation();
     const router = useRouter();
     const warehouseId = Number.parseInt(params.id);
-    const [products, setProducts] = useState<Product[]>([]);
-    const [warehouse, setWarehouse] = useState<Warehouse>({
+    const [products, setProducts] = useState<IProduct[]>([]);
+    const [warehouse, setWarehouse] = useState<IWarehouse>({
         id: 1,
         name: "",
         address: "",
@@ -84,10 +84,10 @@ export default function Page({
             const {data: whProductData} = await getWhsProductsByWarehouse(warehouseId);
             const {data: productData} = await getAllProducts();
 
-            const newProds: Product[] = [];
+            const newProds: IProduct[] = [];
 
-            whProductData.forEach((whsProd: warehouseProductResponse) => {
-                const {name} = productData.find((prod: ProductResponse) => whsProd.productId === prod.id);
+            whProductData.forEach((whsProd: IWarehouseProductResponse) => {
+                const {name} = productData.find((prod: IProductResponse) => whsProd.productId === prod.id);
                 newProds.push({
                     id: whsProd.productId,
                     name,
@@ -176,7 +176,7 @@ export default function Page({
 function InfoSection({
     warehouse
 }: {
-    warehouse: Warehouse
+    warehouse: IWarehouse
 }) {
     const inforBars: {label: string, key: "id" | "name" | "address" | "branchName", icon: string}[] = [
         {label: "Id", key: "id", icon: "hashtag"},

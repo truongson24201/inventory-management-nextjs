@@ -1,17 +1,18 @@
 'use client';
-import { BranchResponse, getAllBranches } from "@/api/branch";
-import { WarehouseResponse, getAllWarehouses } from "@/api/warehouse";
+import { IBranchResponse, getAllBranches } from "@/api/branch";
+import { IWarehouseResponse, getAllWarehouses } from "@/api/warehouse";
 import SearchInput from "@/components/SearchInput";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import Table from "@/layouts/Table";
 import { Color } from "@/utils/constants/colors";
+import filterByFields, { IItem, toIndexSignature } from "@/utils/functions/filterByFields";
 import useActiveNav from "@/utils/hooks/useActiveNav"
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface WarehouseData {
+interface IWarehouseData {
     id: number; 
     name: string; 
     address: string; 
@@ -21,8 +22,10 @@ interface WarehouseData {
 export default function Page() {
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [_, setActiveNav] = useActiveNav();
-    const [warehouses, setWarehouses] = useState<WarehouseData[]>([]);
+    const [warehouses, setWarehouses] = useState<IWarehouseData[]>([]);
+    const [filterdWarehouses, setFilteredWarehouses] = useState<IItem[]>([]);
     const router = useRouter();
+    const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
         setActiveNav("Warehouses");
@@ -32,8 +35,8 @@ export default function Page() {
     async function fetchWarehouses() {
         try {
             showLoading();
-            let warehouseData : WarehouseResponse[];
-            let branchData: BranchResponse[];
+            let warehouseData : IWarehouseResponse[];
+            let branchData: IBranchResponse[];
             
             const warehouseResponse = await getAllWarehouses();
             const branchResponse = await getAllBranches();
@@ -52,6 +55,7 @@ export default function Page() {
             });
 
             setWarehouses(newWarehouses);
+            setFilteredWarehouses(toIndexSignature(newWarehouses));
         }
         catch (error) {
             console.log(error);
@@ -76,6 +80,17 @@ export default function Page() {
                     <section className="flex gap-2 h-10">
                         <SearchInput
                             placeholder="Type warehouse ID here..."
+                            value={searchValue}
+                            handleChange={e => {
+                                const newSearchValue = e.target.value;
+                                setSearchValue(newSearchValue);
+                                const filterList = filterByFields(
+                                        toIndexSignature(warehouses), 
+                                        newSearchValue.trim(), 
+                                        ["id", "name"]
+                                    );
+                                setFilteredWarehouses(filterList);
+                            }}
                         />
                     </section>
                     <Table
@@ -85,7 +100,7 @@ export default function Page() {
                             {id: 3, text: "Address", key: "address"}, 
                             {id: 4, text: "Branch Name", key: "branchName"}, 
                         ]}
-                        dataSet={warehouses}
+                        dataSet={filterdWarehouses}
                     />
                 </div>
             </Main>

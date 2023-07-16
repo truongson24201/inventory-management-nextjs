@@ -2,7 +2,7 @@ import axios from "./axios.config";
 
 const apiPrefix = "/warehouseProducts";
 
-export interface warehouseProductResponse {
+export interface IWarehouseProductResponse {
     warehouseId: number,
     productId: number,
     quantity: number,

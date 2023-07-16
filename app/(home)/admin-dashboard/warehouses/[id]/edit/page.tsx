@@ -13,8 +13,8 @@ import InfoBar from "@/components/InfoBar";
 import EditText from "@/components/EditText";
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { getWarehouseById, updateWarehouse } from "@/api/warehouse";
-import { BranchResponse, getAllBranches } from "@/api/branch";
-import DropDown, { DropdownData } from "@/components/DropDown";
+import { IBranchResponse, getAllBranches } from "@/api/branch";
+import DropDown, { IDropdownData } from "@/components/DropDown";
 
 export default function Page({
     params
@@ -25,7 +25,7 @@ export default function Page({
     const router = useRouter();
     const notify = useNotification();
     const warehouseId = Number.parseInt(params.id);
-    const [branchDataset, setBranchDataset] = useState<DropdownData[]>([]);
+    const [branchDataset, setBranchDataset] = useState<IDropdownData[]>([]);
     const [branchId, setBranchId] = useState(-1);
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [fields, setFields] = useState([
@@ -61,7 +61,7 @@ export default function Page({
         try {
             showLoading();
             const {data: branches} = await getAllBranches();
-            const branchDS = branches.map((branch: BranchResponse) => ({
+            const branchDS = branches.map((branch: IBranchResponse) => ({
                 text: branch.name,
                 value: branch.id,
             }));

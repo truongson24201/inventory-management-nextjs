@@ -6,7 +6,6 @@ import Title from "@/components/DashboardTitle";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import { Color } from "@/utils/constants/colors";
-import useActiveNav from "@/utils/hooks/useActiveNav";
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,7 +36,6 @@ export default function Page({
 }: {
     params: {id: string}
 }) {
-    const [_, setActiveNav] = useActiveNav();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const router = useRouter();
     const warehouseId = Number.parseInt(params.id);
@@ -52,7 +50,6 @@ export default function Page({
     const notify = useNotification();
 
     useEffect(() => {
-        setActiveNav("Warehouses");
         fetchWarehouse();
         fetchWarehouseProducts();
     }, []);

@@ -6,7 +6,6 @@ import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import Table from "@/layouts/Table";
 import { Color } from "@/utils/constants/colors";
-import useActiveNav from "@/utils/hooks/useActiveNav"
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { useEffect, useState } from "react";
 
@@ -23,12 +22,10 @@ interface IProductData {
 }
 
 export default function Page() {
-    const [_, setActiveNav] = useActiveNav();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [products, setProducts] = useState<IProductData[]>([]);
 
     useEffect(() => {
-        setActiveNav("Products");
         fetchProducts();
     }, []);
 
@@ -81,9 +78,9 @@ export default function Page() {
             <Main>
                 <div className="w-full h-full flex flex-col gap-3">
                     <section className="flex gap-2 h-10">
-                        <SearchInput
+                        {/* <SearchInput
                             placeholder="Type branch ID here..."
-                        />
+                        /> */}
                     </section>
                     <Table
                         columns={[

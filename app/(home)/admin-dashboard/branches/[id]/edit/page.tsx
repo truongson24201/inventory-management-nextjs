@@ -7,7 +7,6 @@ import InfoBar from "@/components/InfoBar";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import { Color } from "@/utils/constants/colors";
-import useActiveNav from "@/utils/hooks/useActiveNav";
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
 import Image from "next/image";
@@ -19,7 +18,6 @@ export default function Page({
 }: {
     params: {id: string}
 }) {
-    const [_, setActiveNav] = useActiveNav();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const branchId = Number.parseInt(params.id);
     const router = useRouter();
@@ -30,7 +28,6 @@ export default function Page({
     ]);
 
     useEffect(() => {
-        setActiveNav("Branches");
         fetchBranch();
     }, []);
 

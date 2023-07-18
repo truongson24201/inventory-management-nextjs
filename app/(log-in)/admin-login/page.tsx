@@ -22,6 +22,7 @@ export default function Page() {
         password: false,
     });
 
+    // Xu ly
     async function handleLogin(e: FormEvent) {
         e.preventDefault();
 
@@ -42,7 +43,7 @@ export default function Page() {
     return (
         <>
             <ImageGroup
-                srcs={["/staff-log-in/2.jpg", "/staff-log-in/1.jpg"]}
+                srcs={["/images/staff-log-in-2.jpg", "/images/staff-log-in-1.jpg"]}
             />
             <Form
                 src="/vendors/welcome.svg"

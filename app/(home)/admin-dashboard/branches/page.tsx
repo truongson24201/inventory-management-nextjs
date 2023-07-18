@@ -6,14 +6,12 @@ import Main from "@/layouts/DashboardMain";
 import Table from "@/layouts/Table";
 import { Color } from "@/utils/constants/colors";
 import filterByFields, { IItem, toIndexSignature } from "@/utils/functions/filterByFields";
-import useActiveNav from "@/utils/hooks/useActiveNav"
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
  
 
 export default function Page() {
-    const [_, setActiveNav] = useActiveNav();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [branches, setBranches] = useState<IBranchResponse[]>([]);
     const [filterBranches, setFilterBranches] = useState<IItem[]>([]);
@@ -21,7 +19,6 @@ export default function Page() {
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        setActiveNav("Branches");
         fetchBranches();
     }, []);
 
@@ -73,6 +70,7 @@ export default function Page() {
                             {id: 1, text: "Id", key: "id", linkRoot: "branches/"},
                             {id: 2, text: "Branch Name", key: "name"},
                             {id: 3, text: "Address", key: "address"}, 
+                            {id: 4, text: "Manager", key: "address"}, 
                         ]}
                         dataSet={filterBranches}
                     />

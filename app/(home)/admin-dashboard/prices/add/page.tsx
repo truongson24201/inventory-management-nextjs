@@ -8,7 +8,6 @@ import EditText from "@/components/EditText";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import { Color } from "@/utils/constants/colors";
-import useActiveNav from "@/utils/hooks/useActiveNav";
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
 import Image from "next/image";
@@ -16,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-    const [_, setActiveNav] = useActiveNav();
     const router = useRouter();
     const notify = useNotification();
     const [fields, setFields] = useState([
@@ -28,7 +26,6 @@ export default function Page() {
     const [showLoading, hideLoading] = useLoadingAnimation();
 
     useEffect(() => {
-        setActiveNav("Warehouses");
         fetchBranches();
     }, []);
 

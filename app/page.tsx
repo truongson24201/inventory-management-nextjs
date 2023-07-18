@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main></main>
+      <main className="mt-80">123s</main>
     </>
   )
 }

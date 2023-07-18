@@ -13,11 +13,11 @@ export const enum staffUrls {
 const adminBasePath = "/admin-dashboard/";
 export const enum adminUrls {
     Home = adminBasePath,
-    Products = adminBasePath + "products/",
-    ProductCategories = adminBasePath + "product-categories",
-    Customers = adminBasePath + "customers/",
-    Warehouses = adminBasePath + "warehouses/",
-    Suppliers = adminBasePath + "suppliers/",
+    Accounts = adminBasePath + "accounts/",
     Branches = adminBasePath + "branches/",
-    Users = adminBasePath + "users/",
+    Homestays = adminBasePath + "homestays/",
+    Facilities = adminBasePath + "facilities/",
+    Tourist = adminBasePath + "tourist/",
+    Prices = adminBasePath + "prices/",
+    Reports = adminBasePath + "reports/",
 }

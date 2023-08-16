@@ -1,9 +1,9 @@
 'use client';
-import Form, { Button, Input } from "../Form";
+import Form, { Button, Input } from "./Form";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import {adminUrls} from "@/utils/constants/urls";
-import ImageGroup from "../ImageGroup";
+import ImageGroup from "./ImageGroup";
 
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
@@ -14,8 +14,8 @@ export default function Page() {
     const notify = useNotification();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [credentials, setCredentials] = useState({
-        username: 'hoductrung',
-        password: '123456',
+        username: 'sondinh24201',
+        password: 'fbuLPnkeJg',
     });
     const [errors, setErrors] = useState<{username: false | string, password: false | string}>({
         username: false,
@@ -30,6 +30,8 @@ export default function Page() {
             showLoading();
             const { data } = await login(credentials.username, credentials.password);
             localStorage.setItem("token", data);
+            console.log("data");
+            // console.log(data);
             router.push(adminUrls.Home);
         }
         catch(error) {
@@ -43,17 +45,17 @@ export default function Page() {
     return (
         <>
             <ImageGroup
-                srcs={["/images/staff-log-in-2.jpg", "/images/staff-log-in-1.jpg"]}
+                srcs={["/images/homestay-sapa.jpg", "/images/homestay-phan-thiet-binh-thuan.jpg"]}
             />
             <Form
                 src="/vendors/welcome.svg"
-                title="Login Staff Account"
+                title="Login Admin-Manager Account"
                 handleSubmitForm={handleLogin}
             >
                 <Input
                     icon="user"
                     label="Identifier"
-                    placeholder="N19DCCN001"
+                    placeholder="Username"
                     error={errors.username}
                     value={credentials.username}
                     handleChangeInput={e => setCredentials({...credentials, username: e.target.value})}

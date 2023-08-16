@@ -8,6 +8,9 @@ export default function EditText({
     value,
     type = "text",
     errorText = "",
+    disabled,
+    min,
+    
 }: {
     label: string,
     icon: string,
@@ -15,6 +18,8 @@ export default function EditText({
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void,
     value: string,
     errorText: string,
+    disabled?:boolean | undefined,
+    min?:string,
 }) {
     let className = "h-10 px-3 flex place-items-center border-2 rounded-md  ";
     let classNameError = className + " border-red-400";
@@ -34,6 +39,8 @@ export default function EditText({
                         setIsError(false);
                     }}
                     value={value}
+                    disabled={disabled}  
+                    min={min}
                 />
             </label>
             {isError && <p className="pl-5 text-red-500 font-semibold">{errorText}</p>}

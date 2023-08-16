@@ -6,4 +6,5 @@ export const enum Color {
     WHITE = "white",
     ORANGE = "orange",
     BLACK = "black",
+ 
 }

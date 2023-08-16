@@ -1,5 +1,7 @@
 'use client';
+import { IDistrictResponse, IProvinceResponse, IWardResponse, getProvinceDetails } from "@/api/address";
 import { IBranchResponse, getAllBranches } from "@/api/branch";
+import ComboBox from "@/components/Combobox";
 import SearchInput from "@/components/SearchInput";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
@@ -9,25 +11,37 @@ import filterByFields, { IItem, toIndexSignature } from "@/utils/functions/filte
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
- 
 
 export default function Page() {
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [branches, setBranches] = useState<IBranchResponse[]>([]);
-    const [filterBranches, setFilterBranches] = useState<IItem[]>([]);
     const router = useRouter();
     const [searchValue, setSearchValue] = useState("");
 
+
     useEffect(() => {
         fetchBranches();
-    }, []);
+    },[])
+
 
     async function fetchBranches() {
         try {
             showLoading();
-            const {data} = await getAllBranches();
-            setBranches(data);
-            setFilterBranches(data);
+            const {data : branchRes} = await getAllBranches();
+            // const {data : provinceRes} = await getProvinceDetails()
+            // setAddress = 
+            // branchRes.map((item:IBranchResponse) =>{
+            //     ...item,
+            //     province: `${item.province?.name} + ${item.district?.name} + ${item.ward?.name}`
+            // })
+            const filterAddress = branchRes.map((item: IBranchResponse) => {
+                return {
+                    ...item,
+                    address: `${item.province?.name},  ${item.district?.name}, ${item.ward?.name}`,
+                    statusString: item.status ? "Active" : "Inactive"
+                }
+            })
+            setBranches(filterAddress);
         } 
         catch (error) {
             console.log(error);
@@ -49,9 +63,9 @@ export default function Page() {
             </Header>
             <Main>
                 <div className="w-full h-full flex flex-col gap-3">
-                    <section className="flex gap-2 h-10">
+                    <section className="flex gap-10 h-10">
                         <SearchInput
-                            placeholder="Type branch ID here..."
+                            placeholder="Type address ID here..."
                             value={searchValue}
                             handleChange={e => {
                                 const newSearchValue = e.target.value;
@@ -59,20 +73,29 @@ export default function Page() {
                                 const filterList = filterByFields(
                                         toIndexSignature(branches), 
                                         newSearchValue.trim(), 
-                                        ["id", "name"]
+                                        ["bracnhId", "address"]
                                     );
-                                setFilterBranches(filterList);
+                                // setFilterBranch(filterList);
                             }}
                         />
+                        {/* <ComboBox
+                            label="Select role"
+                            dataset={roles}
+                            handleChange={e => {
+                                setRoleId(Number.parseInt(e.target.value));
+                            }}
+                        />   */}
                     </section>
                     <Table
+                        linkRoot = "branches/"
+                        keyLink = "branchId"
                         columns={[
-                            {id: 1, text: "Id", key: "id", linkRoot: "branches/"},
-                            {id: 2, text: "Branch Name", key: "name"},
-                            {id: 3, text: "Address", key: "address"}, 
-                            {id: 4, text: "Manager", key: "address"}, 
+                            // {id: 1, text: "Id", key: "branchId", linkRoot: "branches/"},
+                            {id: 2, text: "Name", key: "name"},
+                            {id: 5, text: "Address", key: "address"},
+                            {id: 3, text: "status", key: "statusString"}, 
                         ]}
-                        dataSet={filterBranches}
+                        dataSet={branches}
                     />
                 </div>
             </Main>

@@ -1,0 +1,147 @@
+'use client';
+import { getDistrits, getProvinces, getWards } from "@/api/address";
+import { getBranchDetails, updateBracnh } from "@/api/branch";
+import { IHomestayResponse, getHomestayDetails, getStatus, updateHomestay } from "@/api/homestay";
+import BackwardButton from "@/components/BackwardButton";
+import Title from "@/components/DashboardTitle";
+import DropDown, { IDropdownData } from "@/components/DropDown";
+import EditText from "@/components/EditText";
+import InfoBar from "@/components/InfoBar";
+import Header, { Button } from "@/layouts/DashboardHeader";
+import Main from "@/layouts/DashboardMain";
+import { Color } from "@/utils/constants/colors";
+import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
+import useNotification from "@/utils/hooks/useNotification";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function Page({
+    params
+}: {
+    params: {idd: string}
+}) {
+    const [showLoading, hideLoading] = useLoadingAnimation();
+    const homestayId = Number.parseInt(params.idd);
+    const router = useRouter();
+    const notifyPopup = useNotification();
+    const [fields, setFields] = useState([
+        {label: "Name", value: "", icon: "signature", isRequired: true, errorText: ""},
+        {label: "Num people", value: "", icon: "arrow-up-9-1", isRequired: true, errorText: ""},
+    ]);
+
+    const [status, setStatus] = useState("");
+    const [homestay , setHomestay] = useState<IHomestayResponse>();
+    
+    const [statusDataset, setStatusDataset] = useState<IDropdownData[]>([]);
+
+
+    useEffect(() => {
+        fetchHomestay();
+    }, []);
+
+    const fetchHomestay = async () => {
+        try {
+            const {data : homestayRes} = await getHomestayDetails(homestayId);
+            const {data} = await getStatus();
+            setFields([
+                {...fields[0], value: homestayRes?.name ?? ""},
+                {...fields[1], value: homestayRes?.numPeople.toString() ?? ""},
+            ])
+            setHomestay(homestayRes);
+            setStatusDataset(data.map(item => ({
+                text: item,
+                value: item,
+            })))
+            setStatus(homestayRes.status)
+        
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+        
+    
+    async function updateThisHomestay() {
+        try {
+            showLoading();
+            await updateHomestay(homestayId,fields[0].value,Number.parseInt(fields[1].value),status);
+            router.push("./");
+            notifyPopup("Edit successfully!", "success");
+        }catch (error) {
+            if (axios.isAxiosError(error)){
+                notifyPopup(error.response?.data,"error");
+            }
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+    return (
+        <section className="w-full flex flex-col">
+            <Header>
+                <div className="flex gap-4">
+                    <BackwardButton />
+                    <Button
+                        text="Save changes"
+                        color={Color.WHITE}
+                        bgColor={Color.BLUE} 
+                        actionHandler={updateThisHomestay}
+                    /> 
+                </div>
+            </Header>
+            <Main>
+                <div className="w-full h-full flex justify-between gap-5">
+                    <section className="relative w-1/2 flex place-content-center">
+                        <Image 
+                            className="object-fill"
+                            src="/images/branch-edit.jpg"
+                            alt="Branch images"
+                            fill
+                        />
+                    </section>
+                    <section className="w-1/2 border-2 flex flex-col p-5 rounded-md">
+                        <Title
+                            text="Edit homestay information"
+                            icon="pencil"
+                        />
+                        <form className="mt-10 mx-auto w-[480px] flex flex-col gap-4">
+                            {/* <InfoBar label="Id" icon="hashtag" value={homestayId} /> */}
+                            {fields.map((field, idx) => 
+                            <EditText
+                                icon={field.icon}
+                                label={field.label}
+                                value={field.value}
+                                handleChange={(e) => {
+                                    setFields([
+                                        ...fields.slice(0, idx),
+                                        {
+                                            ...field,
+                                            value: e.target.value,
+                                        },
+                                        ...fields.slice(idx + 1)
+                                    ]);
+
+                                    console.log(fields.slice(0, idx));
+                                    console.log(fields.slice(idx + 1));
+                                }}
+                                errorText={field.errorText}
+                                key={field.label + field.errorText}
+                            />
+                        )}
+                        <DropDown
+                            label="Status"
+                            dataset={statusDataset}
+                            handleChange={e => setStatus(e.target.value)}
+                            icon="user"
+                            value={homestay?.status}
+                        />
+                        </form>
+                    </section>
+                </div>
+            </Main>
+        </section>
+    )
+}

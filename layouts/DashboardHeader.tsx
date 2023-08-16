@@ -1,6 +1,7 @@
 import { Color } from "@/utils/constants/colors";
 import Icon from "../components/Icon";
 
+
 export default function Header({
     children,
 }: {
@@ -36,12 +37,17 @@ export function Button({
     text,
     color = Color.BLACK,
     bgColor,
-    actionHandler
+    actionHandler,
+    icon,
+    size,
+    
 }: {
     text: string,
     color?: Color,
     bgColor: Color,
     actionHandler: () => void,
+    icon?:string,
+    size?:"lg" | "xl" | "2xl" | "3xl" | undefined,
 }) {
 
     return (
@@ -49,6 +55,7 @@ export function Button({
             className={`min-w-[80px] px-3 py-2 bg-${bgColor} text-${color} font-bold rounded-md hover:bg-opacity-80 transition`}
             onClick={actionHandler}
         >
+            {icon && <Icon name={icon} size= {size}/>}
             {text}
         </button>
     )

@@ -1,8 +1,11 @@
 'use client';
-import { IBranchResponse, deleteBranch, getBranchById } from "@/api/branch";
-import { IWarehouseResponse, getAllWarehouses, getWarehouseById } from "@/api/warehouse";
+import { IBranchResponse, addTouristInOf, deleteTouristOutOf, getBranchDetails, getTourstsCombobox, getTourstsOf, removeBranch } from "@/api/branch";
+import { getRoleDetails } from "@/api/role";
+import { ITouristResponse, removeTourist } from "@/api/tourist";
 import BackwardButton from "@/components/BackwardButton";
 import Title from "@/components/DashboardTitle";
+import DropDown, { IDropdownData } from "@/components/DropDown";
+import Icon from "@/components/Icon";
 import InfoBar from "@/components/InfoBar";
 import Popup from "@/components/Popup";
 import Header, { Button } from "@/layouts/DashboardHeader";
@@ -12,38 +15,57 @@ import { Color } from "@/utils/constants/colors";
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
 import usePopup from "@/utils/hooks/usePopup";
+import { AxiosError } from "axios";
+import { Console } from "console";
+import { Erica_One } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 
 export default function Page({
     params
 }: {
     params: {id: string}
 }) {
+
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [branch, setBranch] = useState<IBranchResponse>({
-        id: 1,
-        name: "123",
-        address: "234"
+        branchId: 1,
+        name:"",
+        mapLocation:"",
+        status: true,
+        province:{
+            provinceId:1,
+            name:""
+        },
+        district:{
+            districtId:1,
+            name:""
+        },
+        ward:{
+            wardId:1,
+            name:""
+        },
     });
-    const [warehouses, setWarehouses] = useState<IWarehouseResponse[]>([]);
+
+    
+    // const [touristId, setTouristId] = useState(0);
     const branchId = Number.parseInt(params.id);
     const router = useRouter();
     const popup = usePopup();
     const notify = useNotification();
 
     useEffect(() => {
-        fetchBranch();
+        fetchtBranch();
     }, []);
 
-    async function fetchBranch() {
+    async function fetchtBranch() {
         try {
             showLoading();
-            const {data} = await getBranchById(branchId);
-            setBranch(data);
-            const warehouseRes = await getAllWarehouses(data?.id);
-            setWarehouses(warehouseRes.data);
+            const {data: branchRes} = await getBranchDetails(branchId);
+            setBranch(branchRes);
+            
         }
         catch (error) {
             console.log(error);
@@ -56,23 +78,23 @@ export default function Page({
     async function deleteThisBranch() {
         try {
             showLoading();
-            await deleteBranch(branchId);
+            await removeBranch(branchId);
             router.push("./")
-            notify("Delete branch successfully!", "success");
+            notify("Remove branch successfully!", "success");
         }
         catch (error) {
             console.log(error);
-            notify("Delete branch failed!", "error");
+            notify("Remove branch failed!", "error");
         }
         finally {
             hideLoading();
         }
     }
 
-    const deleteBranchPopup = 
-        <Popup text="This branch will be deleted, you're sure?">
+    const removeBranchPopup = 
+        <Popup text="This branch will be block, you're sure?">
             <Button
-                text="Delete"
+                text="Remove"
                 color={Color.WHITE}
                 bgColor={Color.RED} 
                 actionHandler={() => {
@@ -100,19 +122,24 @@ export default function Page({
                         actionHandler={() => router.push(`${branchId}/edit`)}
                     />
                     <Button
-                        text="Delete"
+                        text="Remove"
                         color={Color.WHITE}
                         bgColor={Color.RED} 
                         actionHandler={() => {
-                            popup.show(deleteBranchPopup);
+                            popup.show(removeBranchPopup);
                         }}
                     />
                 </div>
             </Header>
             <Main>
                 <div className="w-full h-full flex gap-3">
-                    <InfoSection branch={branch} />
-                    <WarehousesSection warehouses={warehouses} />
+                    <InfoSection 
+                        branch={branch}
+                    />
+                    <TouristSection 
+                        branchId={branchId}
+                        
+                    />
                 </div>
             </Main>
         </section>
@@ -120,14 +147,18 @@ export default function Page({
 }
 
 function InfoSection({
-    branch
+    branch,
 }: {
-    branch: IBranchResponse
+    branch: IBranchResponse,
 }) {
-    const inforBars: {label: string, key: "id" | "name" | "address", icon: string}[] = [
-        {label: "Id", key: "id", icon: "hashtag"},
+    const inforBars: {label: string, key: "branchId" | "name" | "mapLocation"  | "province" | "district" | "ward" , icon: string}[] = [
+        // {label: "Id", key: "branchId", icon: "hashtag"},
         {label: "Name", key: "name", icon: "signature"},
-        {label: "Address", key: "address", icon: "map-location-dot"},
+        // {label: "Map", key: "mapLocation", icon: "map-location-dot"},
+        // {label: "Status", key: "status", icon: "map-location-dot"},
+        {label: "Province", key: "province", icon: "p"},
+        {label: "District", key: "district", icon: "d"},
+        {label: "Ward", key: "ward", icon: "w"},
     ];
 
     return (
@@ -149,31 +180,177 @@ function InfoSection({
                 {inforBars.map(infoBar =>
                     <InfoBar
                         label={infoBar.label}
-                        value={branch?.[infoBar.key] ?? ""}
+                        value={
+                            (infoBar.key === "province" || infoBar.key === "district" || infoBar.key === "ward" ? branch[infoBar.key].name : branch[infoBar.key])
+                        }
+                        // value={branch.key}
                         icon={infoBar.icon}
                     />
                 )}
+                <InfoBar
+                    label={"Status"}
+                    value={branch?.status ? "Active" : "Block"}
+                    icon={"circle-info"}
+                />
+                <a className="flex ml-4 items-center text-center justify-start" href={branch.mapLocation} target="_blank">
+                    <Icon name="location-dot" size="xl" /> 
+                    <div className="p-2 text-lg">
+                        Google Map
+                    </div>
+                </a>
             </div>
         </section>
     )
 }
 
-function WarehousesSection({
-    warehouses
+function TouristSection({
+    branchId,
 }: {
-    warehouses: IWarehouseResponse[]
+    branchId:number,
 }) {
+    
+    const [touristDropDown, setTouristDropDown] = useState<IDropdownData[]>([]);
+    const [tourists, setTourists] = useState<ITouristResponse[]>([]);
+    const [showLoading, hideLoading] = useLoadingAnimation();
+    const [touristId, setTouristId] = useState(0);
+    const popup = usePopup();
+    const notify = useNotification();
+    const router = useRouter();
+
+    useEffect(() => {
+        fetchTourists();
+    }, []); 
+
+    const removeThisTouristOutOf = async (id: number) => {
+        // popup.hide();
+        try {
+            showLoading();
+            const {data} = await deleteTouristOutOf(branchId,id);
+            setTourists(tourists.filter(t => t.touristId != id));
+            const newDropdown = [
+                ...touristDropDown,
+                {
+                    text: data.name ?? "",
+                    value: data.touristId + "" ,
+                }
+            ];
+            setTouristDropDown(newDropdown);
+            newDropdown?.[0] && setTouristId(Number.parseInt(newDropdown[0].value + ""));
+            notify("REMOVE successfully!", "success");
+        }
+        catch (error) {
+            console.log(error);
+            notify("Remove failed", "error");
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+    async function addThisTouristInOf() {
+        try {
+            showLoading();
+            const {data : newT} =  await addTouristInOf(branchId,touristId);
+            // router.push("./")
+            // fectTouristsDropDown();
+            tourists.push(newT);
+            const newDropdodwn = touristDropDown.filter(dd => dd.value != touristId)
+            setTouristDropDown(newDropdodwn);
+            newDropdodwn?.[0] && setTouristId(Number.parseInt(newDropdodwn[0].value + ""));
+            notify("ADD successfully!", "success");
+        }
+        catch (error) {
+            console.log(error);
+            notify("Add tourist into this branch failed!", "error");
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+    async function fetchTourists() {
+        try {
+            showLoading();
+            const {data: touristsRes} = await getTourstsOf(branchId);
+            setTourists(touristsRes);
+            let {data: touristsDropRes} = await getTourstsCombobox(branchId);
+            touristsDropRes.filter(dd => !touristsRes.includes(dd));
+            setTouristDropDown(touristsDropRes.map(tourist => ({
+                text: tourist?.name ?? "", value: tourist?.touristId ?? 0
+            })));
+            setTouristId(touristsDropRes[0].touristId);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            hideLoading();
+        }
+    }
+
+
+    const deleteBtn = 
+        <button className="w-10 h-10 text-white bg-red-600 rounded-md hover:bg-opacity-80">
+            <Icon
+                name="trash"
+                size="lg"
+            />
+        </button>
+
     return (
         <section className="w-3/5 p-3 pt-6 h-full flex flex-col border-2 rounded-r-sm gap-6">
-            <Title text="Warehouses belong to this branch" icon="warehouse" color={Color.GREEN} />
+            <Title text="Tourists belong to this branch" icon="warehouse" color={Color.GREEN} />
+                <div className="flex gap-4">
+                    <DropDown
+                            label="tourists"
+                            dataset={touristDropDown}
+                            handleChange={e => setTouristId(Number.parseInt(e.target.value))}
+                            icon="user"
+                            value={touristId}
+                        />
+                    <Button
+                        text="Add"
+                        color={Color.WHITE}
+                        bgColor={Color.ORANGE} 
+                        actionHandler={() => {
+                            addThisTouristInOf();
+                        }}
+                    />
+                </div>
             <Table
+                //    linkRoot = ""
+                //    keyLink = ""
                 columns={[
-                    {id: 1, text: "Id", key: "id", linkRoot: "/admin-dashboard/warehouses/"},
-                    {id: 2, text: "Warehouses Name", key: "name"},
-                    {id: 3, text: "Address", key: "address"}, 
+                    // {id: 1, text: "Id", key: "touristId"},
+                    {id: 1, text: "Name", key: "name"},
                 ]}
-                dataSet={warehouses}
+                dataSet={tourists}
+                extra={{
+                    column: {id: 3, text: "Functions"},
+                    node: deleteBtn,
+                    handleClick: (id: number) => {
+                        removeThisTouristOutOf(id);
+                        // popup.show(
+                        //     <Popup text="This tourist will be remove out of branch, you're sure?">
+                        //         <Button
+                        //             text="Remove"
+                        //             color={Color.WHITE}
+                        //             bgColor={Color.RED} 
+                        //             actionHandler={() => }
+                        //         />
+                        //         <Button
+                        //             text="Cancel"
+                        //             color={Color.BLACK}
+                        //             bgColor={Color.WHITE} 
+                        //             actionHandler={() => {popup.hide()}}
+                        //         />
+                        //     </Popup>
+                        // )
+                    },
+                    key: "touristId"
+                }}
             />
         </section>
     )
 }
+

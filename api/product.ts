@@ -1,6 +1,6 @@
 import axios from "./axios.config";
 
-const apiPrefix = "/products";
+const apiPrefix = "/address";
 
 export interface IProductResponse {
     id: number,

@@ -1,35 +1,25 @@
 'use client';
-import { getBranchById } from "@/api/branch";
-import { deleteWarehouse, getWarehouseById } from "@/api/warehouse";
 import BackwardButton from "@/components/BackwardButton";
 import Title from "@/components/DashboardTitle";
+import InfoBar from "@/components/InfoBar";
+import Popup from "@/components/Popup";
 import Header, { Button } from "@/layouts/DashboardHeader";
 import Main from "@/layouts/DashboardMain";
 import { Color } from "@/utils/constants/colors";
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
+import useNotification from "@/utils/hooks/useNotification";
+import usePopup from "@/utils/hooks/usePopup";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import InfoBar from "@/components/InfoBar";
+import { IHomestayResponse, getAllHomestay } from "@/api/homestay";
+import SearchInput from "@/components/SearchInput";
+import filterByFields, { toIndexSignature } from "@/utils/functions/filterByFields";
 import Table from "@/layouts/Table";
-import { getWhsProductsByWarehouse, IWarehouseProductResponse } from "@/api/warehouseProduct";
-import { IProductResponse, getAllProducts } from "@/api/product";
-import usePopup from "@/utils/hooks/usePopup";
-import Popup from "@/components/Popup";
-import useNotification from "@/utils/hooks/useNotification";
-
-interface IWarehouse {
-    id: number,
-    name: string,
-    address: string,
-    branchName: string,
-}
-
-interface IProduct {
-    id: number,
-    name: string,
-    quantity: number,
-}
+import { IPricesResponse, createPrice, getPriceList } from "@/api/price";
+import EditText from "@/components/EditText";
+import axios, { AxiosError } from "axios";
+import { getCurrentDateFormatted } from "@/utils/functions/dateFormet";
 
 export default function Page({
     params
@@ -37,35 +27,31 @@ export default function Page({
     params: {id: string}
 }) {
     const [showLoading, hideLoading] = useLoadingAnimation();
+    const [priceList, setPriceList] = useState<IPricesResponse[]>([]);
+    const [searchValue, setSearchValue] = useState("");
+    const branchId = Number.parseInt(params.id);
     const router = useRouter();
-    const warehouseId = Number.parseInt(params.id);
-    const [products, setProducts] = useState<IProduct[]>([]);
-    const [warehouse, setWarehouse] = useState<IWarehouse>({
-        id: 1,
-        name: "",
-        address: "",
-        branchName: ""
-    });
     const popup = usePopup();
     const notify = useNotification();
+    const [newPrice, setNewPrice] = useState({
+        label: "Effective", 
+        value: getCurrentDateFormatted(), 
+        icon: "", 
+        isRequired: true, 
+        errorText: "" , 
+        type: "date"
+    });
+
 
     useEffect(() => {
-        fetchWarehouse();
-        fetchWarehouseProducts();
+        fetchPrices();
     }, []);
 
-    async function fetchWarehouse() {
+    async function fetchPrices() {
         try {
             showLoading();
-            const {data: warehouseData} = await getWarehouseById(warehouseId);
-            const {data: branchData} = await getBranchById(warehouseData.branchId);
-
-            setWarehouse({
-                id: warehouseData.id,
-                name: warehouseData.name,
-                address: warehouseData.address,
-                branchName: branchData.name
-            })
+            const {data: pricesRes} = await getPriceList(branchId);
+            setPriceList(pricesRes);
         }
         catch (error) {
             console.log(error);
@@ -75,162 +61,91 @@ export default function Page({
         }
     }
 
-    async function fetchWarehouseProducts() {
+    const requesCreactePrice = async () => { 
         try {
-            showLoading();
-            const {data: whProductData} = await getWhsProductsByWarehouse(warehouseId);
-            const {data: productData} = await getAllProducts();
-
-            const newProds: IProduct[] = [];
-
-            whProductData.forEach((whsProd: IWarehouseProductResponse) => {
-                const {name} = productData.find((prod: IProductResponse) => whsProd.productId === prod.id);
-                newProds.push({
-                    id: whsProd.productId,
-                    name,
-                    quantity: whsProd.quantity
-                });
-            });
-
-            setProducts(newProds);
+            const {data} = await createPrice(branchId,newPrice.value);
+            console.log(data);
+            notify("data", "success");
+            priceList.push(data);
         }
         catch (error) {
-            console.log(error);
-        }
-        finally {
-            hideLoading();
-        }
+            if (axios.isAxiosError(error)){
+                notify(error.response?.data, "error");
+            }
+        } 
     }
-
-    async function deleteThisWarehouse() {
-        try {
-            showLoading();
-            await deleteWarehouse(warehouseId);
-            router.push("./")
-            notify("Delete warehouse successfully!", "success");
-        }
-        catch (error) {
-            console.log(error);
-            notify("Delete warehouse failed!", "error");
-        }
-        finally {
-            hideLoading();
-        }
-    }
-
-    const deleteWarehousePopup = 
-        <Popup text="This warehouse will be deleted, you're sure?">
-            <Button
-                text="Delete"
-                color={Color.WHITE}
-                bgColor={Color.RED} 
-                actionHandler={() => {
-                    popup.hide();
-                    deleteThisWarehouse();
-                }}
-            />
-            <Button
-                text="Cancel"
-                color={Color.BLACK}
-                bgColor={Color.WHITE} 
-                actionHandler={() => {popup.hide()}}
-            />
-        </Popup>
 
     return (
         <section className="w-full flex flex-col">
             <Header>
                 <div className="flex gap-4">
                     <BackwardButton />
-                    <Button
-                        text="Edit"
-                        color={Color.WHITE}
-                        bgColor={Color.ORANGE} 
-                        actionHandler={() => router.push(`${warehouseId}/edit`)}
-                    />
-                    <Button
-                        text="Delete"
-                        color={Color.WHITE}
-                        bgColor={Color.RED} 
-                        actionHandler={() => {
-                            popup.show(deleteWarehousePopup);
+                    <EditText
+                        icon={newPrice.icon}
+                        label={newPrice.label}
+                        value={newPrice.value}
+                        type={newPrice.type}
+                        min={getCurrentDateFormatted()}
+                        handleChange={(e) => { 
+                            setNewPrice({
+                                ...newPrice,
+                                value: e.target.value
+                            }); 
+                            console.log(e.target.value)
                         }}
+                        errorText={newPrice.errorText} 
+                    />
+                    <Button 
+                        text="Add Price"
+                        color={Color.WHITE}
+                        bgColor={Color.GREEN} 
+                        actionHandler={requesCreactePrice}
+                    />
+                    <Title
+                        text="To Price List"
+                        icon="dollar-sign"
+                        color={Color.GRAY}
                     />
                 </div>
             </Header>
             <Main>
-                <div className="w-full h-full flex gap-3">
-                    <InfoSection warehouse={warehouse} />
-                    <ProductSection products={products} />
+            <div className="w-full h-full flex flex-col gap-3">
+                    <section className="flex gap-10 h-10">
+                        <SearchInput
+                            placeholder="Type branch ID here..."
+                            value={searchValue}
+                            handleChange={e => {
+                                const newSearchValue = e.target.value;
+                                setSearchValue(newSearchValue);
+                                const filterList = filterByFields(
+                                        toIndexSignature(priceList), 
+                                        newSearchValue.trim(), 
+                                        ["priceListId"]
+                                    );
+                                // setFilterBranch(filterList);
+                            }}
+                        />
+                        {/* <ComboBox
+                            label="Select role"
+                            dataset={roles}
+                            handleChange={e => {
+                                setRoleId(Number.parseInt(e.target.value));
+                            }}
+                        />   */}
+                    </section>
+                    <Table
+                        linkRoot = {`${branchId}/`}
+                        keyLink="pricelistId"
+                        columns={[
+                            // {id: 1, text: "Id", key: "pricelistId" , linkRoot: `${branchId}/`},
+                            {id: 2, text: "Effective Date", key: "effectiveDate"},
+                            {id: 5, text: "Update On", key: "updateOn"},
+                            {id: 3, text: "update By", key: "updateBy"}, 
+                        ]}
+                        dataSet={priceList}
+                    />
                 </div>
             </Main>
-        </section>
-    )
-}
-
-
-
-function InfoSection({
-    warehouse
-}: {
-    warehouse: IWarehouse
-}) {
-    const inforBars: {label: string, key: "id" | "name" | "address" | "branchName", icon: string}[] = [
-        {label: "Id", key: "id", icon: "hashtag"},
-        {label: "Name", key: "name", icon: "signature"},
-        {label: "Address", key: "address", icon: "map-location-dot"},
-        {label: "Branch", key: "branchName", icon: "building"},
-    ];
-
-    return (
-        <section className="w-2/5 p-3 pt-6 h-full flex flex-col border-2 rounded-l-sm gap-6">
-            <Title
-                text="Detailed Information"
-                icon="circle-info"
-                color={Color.BLUE}
-            />
-            <div className="relative w-full h-52">
-                <Image
-                    className="object-contain"
-                    src="/images/warehouse.webp"
-                    alt="Log in image"
-                    fill
-                /> 
-            </div>
-            <div className="flex flex-col gap-3"> 
-                {inforBars.map(infoBar =>
-                    <InfoBar
-                        key={infoBar.label}
-                        label={infoBar.label}
-                        value={warehouse?.[infoBar.key] ?? ""}
-                        icon={infoBar.icon}
-                    />
-                )}
-            </div>
-        </section>
-    )
-}
-
-function ProductSection({
-    products
-}: {
-    products: {
-        id: number,
-        name: string,
-        quantity: number,
-    }[]
-}) {
-    return (
-        <section className="w-3/5 p-3 pt-6 h-full flex flex-col border-2 rounded-r-sm gap-6">
-            <Title text="Warehouses belong to this branch" icon="warehouse" color={Color.GREEN} />
-            <Table
-                columns={[
-                    {id: 1, text: "Id", key: "id", linkRoot: "/admin-dashboard/products/"},
-                    {id: 2, text: "Product Name", key: "name"},
-                    {id: 3, text: "Quantity", key: "quantity"}, 
-                ]}
-                dataSet={products}
-            />
         </section>
     )
 }

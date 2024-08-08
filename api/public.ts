@@ -88,10 +88,6 @@ export const getHomestayDetailsClient = (id:number) =>{
     return axios.get<IHomestayDetails>(`${apiPrefix}/${id}/details`);
 }
 
-export const registerAccount = (username:string, password:string,fullName:string,email:string,phoneNumber:string) =>{
-    return axios.post(`${apiSignup}/register`,{username,password,fullName,email,phoneNumber});
-}
-
 export const getHomesPublic = () =>{
     return axios.get<IHomesPublic[]>(`${apiPrefix}/homestays`);
 }

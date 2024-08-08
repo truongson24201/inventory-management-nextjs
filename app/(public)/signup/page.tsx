@@ -5,11 +5,10 @@ import {clientUrls} from "@/utils/constants/urls";
 
 import useLoadingAnimation from "@/utils/hooks/useLoadingAnimation";
 import useNotification from "@/utils/hooks/useNotification";
-import { login } from "@/api/auth";
 import Form, { Button, Input } from "@/app/(log-in)/admin-login/Form";
 import Image from "next/image";
-import { registerAccount } from "@/api/public";
 import axios from "axios";
+import { registerAccount } from "@/api/auth";
 
 
 
@@ -78,6 +77,7 @@ export default function Page() {
         // Kiểm tra các thông tin khác của info nếu cần
         // console.log("errors",errors);
         if (errors.username == false && errors.password == false && errors.email == false && errors.fullName == false && errors.phoneNumber == false) {
+            console.log(info)
             requestRegisterAccount();
             router.push("../client-login");
         }else {

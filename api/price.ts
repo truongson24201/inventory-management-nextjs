@@ -1,5 +1,6 @@
 import axios from "./axios.config";
 import { IHomestayResponse } from "./homestay";
+import { IPriceMenuItemView, IPriceView } from "./response";
 
 const apiPrefix = "/prices";
 
@@ -69,3 +70,45 @@ export const removeHomestayOutOf = (id:number,homestayId:number) => {
 export const refreshAllPrices = () =>{
     return axios.put(`${apiPrefix}/refresh`);
  }
+
+
+
+// newwwwwwwwwwwwwwwww
+ 
+ export const getTicketByDateRegis = (date:string) =>{
+    return axios.get<IPriceView>(`${apiPrefix}/ticket/by-date-regis`,{
+        params:{date}
+    });
+ }
+
+ export const getByMenuItemById = (menuItemId:number) =>{
+    return axios.get<IPriceMenuItemView[]>(`${apiPrefix}/menu-item/all-by-id`,{
+        params:{menuItemId}
+    });
+ }
+
+ export const createPriceMenuItem = (priceMenuItemId:number | null,price:number,applicationDate:string,menuItemId:number) =>{
+    return axios.post<IPriceMenuItemView>(`${apiPrefix}/menu-item/create`,{
+        priceMenuItemId,
+        price,
+        applicationDate,
+        menuItemId
+    });
+ }
+
+ export const updatePriceMenuItem = (priceMenuItemId:number | null,price:number,applicationDate:string,menuItemId:number) =>{
+    return axios.put<IPriceMenuItemView>(`${apiPrefix}/menu-item/update`,{
+        priceMenuItemId,
+        price,
+        applicationDate,
+        menuItemId
+    });
+ }
+
+ export const deletePriceMenuItem = (id:number) =>{
+    return axios.delete<IPriceMenuItemView>(`${apiPrefix}/menu-item/delete`,{
+        params: {id}
+    });
+ }
+
+ 

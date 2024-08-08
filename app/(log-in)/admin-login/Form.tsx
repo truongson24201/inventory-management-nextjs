@@ -50,7 +50,7 @@ export function Input({
     value: string,
     placeholder: string,
     icon: string,
-    error: string | false,
+    error?: string | false,
     type?: 'text' | 'password' | 'number',
     handleChangeInput: (e: ChangeEvent<HTMLInputElement>) => void, 
 }) {

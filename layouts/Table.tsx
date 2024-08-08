@@ -8,6 +8,8 @@ export default function Table ({
     extra,
     linkRoot,
     keyLink,
+    profix,
+    onRowClick, // Thêm callback function
 }: {
     columns: {id: number, text: string, key: string, icon?: string, linkRoot?: string, isImage?: boolean}[],
     dataSet: any[],
@@ -19,6 +21,8 @@ export default function Table ({
     },
     linkRoot?:string,
     keyLink?:string,
+    profix?:string,
+    onRowClick?: (row: any) => void, // Thêm callback function
 }) {
     const headerCols = [...columns];
     if (extra) {
@@ -28,89 +32,89 @@ export default function Table ({
         })
     }
 
+    const handleRowClick = (row: any) => {
+        if (onRowClick) {
+            onRowClick(row);
+        }
+    };
+
+    const getNestedValue = (obj: any, key: string) => {
+        return key.split('.').reduce((o, i) => o[i], obj);
+    };
+
     let colsCount = extra ? headerCols.length : columns.length; 
     let count = 0;
 
     return (
         <section className="flex flex-col h-full">
             <Header columns={headerCols} />
-            {
-                !linkRoot ? 
-                <main className="mt-1 flex flex-col max-h-[560px] overflow-auto">
-                {dataSet.map(row => (
-                    <div
-                        className={`grid grid-cols-${colsCount} min-h-[48px] shrink-0 odd:bg-gray-50 border-2 border-transparent hover:border-gray-300 hover:bg-[#ecf0f1]`}
-                    >
-                        {
-                            columns.map(col => (
-                                <div key={col.key + col.text} 
-                                className="  col-span-1 grid place-items-center text-center"
+            <main className="mt-1 flex flex-col max-h-[560px] overflow-auto">
+            {dataSet.map((row, index) => {
+                    const keyValue = keyLink ? getNestedValue(row, keyLink) : row.id;
+
+                    return (
+                        linkRoot ? 
+                            <Link
+                                href={`${linkRoot}${keyValue}${profix}`}
+                                key={index} // Cần sử dụng `index` hoặc giá trị duy nhất khác
+                                className={`grid grid-cols-${colsCount} min-h-[48px] shrink-0 odd:bg-gray-50 border-2 border-transparent hover:border-gray-300 hover:bg-[#ecf0f1]`}
                             >
-                                {col.isImage 
-                                    ? 
-                                        <div className="relative w-80 h-52">
-                                            <Image
-                                                className="object-contain"
-                                                src={row[col.key]}
-                                                alt="Image"
-                                                fill
-                                            />
-                                        </div>
-                                    : row[col.key]
+                                {columns.map(col => (
+                                    <div key={col.key + col.text} 
+                                        className="col-span-1 grid place-items-center text-center">
+                                        {col.isImage 
+                                            ? <div className="relative w-80 h-52">
+                                                <Image
+                                                    className="object-contain"
+                                                    src={getNestedValue(row, col.key)}
+                                                    alt="Image"
+                                                    fill
+                                                />
+                                              </div>
+                                            : getNestedValue(row, col.key)
+                                        }
+                                    </div>
+                                ))}
+                                {extra && 
+                                    <div className="col-span-1 grid place-items-center text-center">
+                                        <span onClick={() => extra.handleClick(row)}>
+                                            {extra.node}
+                                        </span>
+                                    </div>
                                 }
-                                </div>
-                            ))
-                        }
-                        {
-                            extra && 
-                            <div className="col-span-1 grid place-items-center text-center">
-                                <span onClick={() => extra.handleClick(row[extra.key])}>
-                                    {extra.node}
-                                </span>
-                            </div>
-                        }
-                    </div>
-                ))}
-                </main> :
-                <main className="mt-1 flex flex-col max-h-[560px] overflow-auto">
-                {dataSet.map(row => (
-                    <Link
-                        href={linkRoot + row[keyLink + ""]}
-                        key={row.id}
-                        className={`grid grid-cols-${colsCount} min-h-[48px] shrink-0 odd:bg-gray-50 border-2 border-transparent hover:border-gray-300 hover:bg-[#ecf0f1]`}
-                    >
-                        {
-                            columns.map(col => (
-                                <div key={col.key + col.text} 
-                                className="  col-span-1 grid place-items-center text-center"
+                            </Link> :
+                            <div
+                                key={index}
+                                className={`grid grid-cols-${colsCount} min-h-[48px] shrink-0 odd:bg-gray-50 border-2 border-transparent hover:border-gray-300 hover:bg-[#ecf0f1]`}
+                                onClick={() => handleRowClick(row)}
                             >
-                                {col.isImage 
-                                    ? 
-                                        <div className="relative w-80 h-52">
-                                            <Image
-                                                className="object-contain"
-                                                src={row[col.key]}
-                                                alt="Image"
-                                                fill
-                                            />
-                                        </div>
-                                    : row[col.key]
+                                {columns.map(col => (
+                                    <div key={col.key + col.text} 
+                                        className="col-span-1 grid place-items-center text-center">
+                                        {col.isImage 
+                                            ? <div className="relative w-80 h-52">
+                                                <Image
+                                                    className="object-contain"
+                                                    src={getNestedValue(row, col.key)}
+                                                    alt="Image"
+                                                    fill
+                                                />
+                                              </div>
+                                            : getNestedValue(row, col.key)
+                                        }
+                                    </div>
+                                ))}
+                                {extra && 
+                                    <div className="col-span-1 grid place-items-center text-center">
+                                        <span onClick={() => extra.handleClick(row)}>
+                                            {extra.node}
+                                        </span>
+                                    </div>
                                 }
-                                </div>
-                            ))
-                        }
-                        {
-                            extra && 
-                            <div className="col-span-1 grid place-items-center text-center">
-                                <span onClick={() => extra.handleClick(row[extra.key])}>
-                                    {extra.node}
-                                </span>
                             </div>
-                        }
-                    </Link>
-                ))}
+                    );
+                })}
             </main>
-            }
             
         </section>
     )

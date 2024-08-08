@@ -25,10 +25,10 @@ export const staffNavs = [
 export const adminNavs = [
     {icon: 'house', url: adminUrls.Home, text: "Home"}, 
     {icon: 'user', url: adminUrls.Accounts, text: "Accounts"}, 
-    {icon: 'building', url: adminUrls.Branches, text: "Branches"}, 
-    {icon: 'tree-city', url: adminUrls.Homestays, text: "Homestays"}, 
-    {icon: 'kitchen-set', url: adminUrls.Facilities, text: "Facilities"}, 
-    {icon: 'umbrella-beach', url: adminUrls.Tourist, text: "Tourist"}, 
+    {icon: 'file-lines', url: adminUrls.Menu, text: "Menu"}, 
+    {icon: 'tree-city', url: adminUrls.Reservation, text: "Reservation"}, 
+    {icon: 'kitchen-set', url: adminUrls.TableHistory, text: "Table History"}, 
+    {icon: 'umbrella-beach', url: adminUrls.Feedback, text: "Feedback"}, 
     {icon: 'hand-holding-dollar', url: adminUrls.Prices, text: "Prices"},
     {icon: 'file-invoice-dollar', url: adminUrls.Invoices, text: "Invoices"}, 
     {icon: 'calendar-days', url: adminUrls.Calendar, text: "Calendar"},
@@ -38,8 +38,8 @@ export const adminNavs = [
 
 export const clientNav = [
     {icon: 'house', url: adminUrls.Home, text: "Home"},
-    {icon: 'building', url: adminUrls.Branches, text: "blog"}, 
-    {icon: 'umbrella-beach', url: adminUrls.Tourist, text: "Tourist"}, 
+    {icon: 'building', url: adminUrls.Reservation, text: "blog"}, 
+    {icon: 'umbrella-beach', url: adminUrls.TableHistory, text: "Tourist"}, 
     {icon: 'user', url: adminUrls.Accounts, text: "contact"}, 
     {icon: 'file-invoice-dollar', url: adminUrls.Invoices, text: "Invoices"}, 
     {icon: 'chart-simple', url: adminUrls.Reports, text: "Reports"}, 

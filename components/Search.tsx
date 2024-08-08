@@ -5,53 +5,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Search({
-  branchIdParam,
-  addressParam,
   checkInParam,
-  checkOutParam,
-  numParam,
 } :{
-  branchIdParam:any,
-  addressParam:any,
   checkInParam:any,
-  checkOutParam:any,
-  numParam:any,
 }) {
 
     const router = useRouter();
     const [branches, setBranches] = useState<IBranchesPublic[]>([]);
-    const [address, setAdress] = useState(addressParam);
-    const [branchId,setbranchId] = useState(branchIdParam);
     const [checkIn,setCheckIn] = useState(checkInParam);
-    const [checkOut,setCheckOut] = useState(checkOutParam);
-    const [numPeople,setNumPeople] = useState(numParam);
-
-
     
-  useEffect(() =>{
-    if (address) {
-      fetchBranches();
-    }else {
-      setBranches([]);
-    }
-  },[address])
-
-  const fetchBranches = async () => {
-    try {
-        const {data} = await getBranchesAddress(address);
-        setBranches(data)
-    }
-    catch (error) {
-        console.log(error);
-    }
-  }
-
-  const handleSelectBranch = (branch:IBranchesPublic) => {
-    setbranchId(branch.branchId);
-    setAdress(branch.address);
-    setBranches([]);
-  };
-
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -82,7 +44,7 @@ export default function Search({
   return(
     <section>
         <div className="sm:mx-auto mt-20 justify-center sm:w-full sm:flex">
-              <input
+              {/* <input
                 type="text"
                 className="block w-1/3 border border-transparent rounded-md px-5 py-3 text-base text-background shadow-sm focus:outline-none focus:border-transparent focus:ring-2 focus:ring-active"
                 placeholder="Enter address or tourist"
@@ -101,7 +63,7 @@ export default function Search({
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
             </div>
             <div className="mt-4 w-full sm:mx-auto lg:mx-0">
             <div className="flex flex-col md:flex-row justify-center md:space-x-4 font-medium ">
@@ -113,34 +75,21 @@ export default function Search({
                 value={checkIn}
                 min={getCurrentDate()} 
               />
-              <input type="date" className="px-4 py-2 bg-gray-200 text-gray-800 dark:text-white lg:hover:text-cyan-500 focus:outline-none  focus:bg-gray-200  focus:text-cyan-500 text-sm lg:px-5 lg:py-2.5 mr-2  mb-2 md:mb-0 md:w-1/6" 
-                onChange={(event:any) => {
-                  const value = event.target.value;
-                  setCheckOut(value);
-                }}
-                value={checkOut}
-                min={getMinCheckOutDate()} 
-                disabled ={!checkIn}
-              />
-              <input type="number" min="1" className="px-4 py-2 rounded-r-lg bg-gray-200 focus:outline-none focus:ring focus:border-blue-300 mb-2 md:mb-0 md:w-1/6" placeholder="Guests" 
+              {/* <input type="number" min="1" className="px-4 py-2 rounded-r-lg bg-gray-200 focus:outline-none focus:ring focus:border-blue-300 mb-2 md:mb-0 md:w-1/6" placeholder="Guests" 
                 onChange={(event:any) => {
                   const value = event.target.value;
                   setNumPeople(value);
                 }}
                 value={numPeople}
-              />
+              /> */}
               {/* <button className="px-6 py-3 rounded-lg text-white font-bold bg-cyan-600 hover:bg-cyan-900 md:w-1/6"> */}
                 <Link className="px-6 py-3 rounded-lg text-white font-bold bg-cyan-600 hover:bg-cyan-900 md:w-1/6 flex justify-center items-center"
                   href={{
-                  pathname: "homestays/",
+                  pathname: "reservation/form",
                   query: {
-                      branchId: branchId,
                       checkIn: checkIn,
-                      checkOut: checkOut,
-                      numPeople: numPeople,
-                      address:address,
                   }
-              }}>Find Homestays</Link>
+              }}>Booking now</Link>
               {/* </button> */}
             </div>
             </div>

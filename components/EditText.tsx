@@ -16,7 +16,7 @@ export default function EditText({
     icon: string,
     type?: string,
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void,
-    value: string,
+    value: string | number,
     errorText: string,
     disabled?:boolean | undefined,
     min?:string,

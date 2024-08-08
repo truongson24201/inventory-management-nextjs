@@ -32,7 +32,7 @@ export default function Page() {
         try {
             showLoading();
             const { data } = await login(credentials.username, credentials.password);
-            localStorage.setItem("token", data);
+            localStorage.setItem("token", data.accessToken);
             console.log("data");
             // console.log(data);
             router.push("./");

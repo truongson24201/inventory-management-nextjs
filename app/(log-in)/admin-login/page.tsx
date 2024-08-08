@@ -14,8 +14,8 @@ export default function Page() {
     const notify = useNotification();
     const [showLoading, hideLoading] = useLoadingAnimation();
     const [credentials, setCredentials] = useState({
-        username: 'sondinh24201',
-        password: 'fbuLPnkeJg',
+        username: '1',
+        password: '123456',
     });
     const [errors, setErrors] = useState<{username: false | string, password: false | string}>({
         username: false,
@@ -29,7 +29,7 @@ export default function Page() {
         try {
             showLoading();
             const { data } = await login(credentials.username, credentials.password);
-            localStorage.setItem("token", data);
+            localStorage.setItem("token", data.accessToken);
             console.log("data");
             // console.log(data);
             router.push(adminUrls.Home);
